@@ -19,5 +19,15 @@
         <class value="uk.ac.manchester.cs.owl.explanation.InconsistentOntologyExplanationPluginImpl"/>
         <name value="Inconsistent Ontology Explanation"/>
     </extension>
+    <extension
+          id="JustificationBasedLogic"
+          point="not.org.saa.protege.explanation.joint.service">
+       <name
+             value="Justification Based Logic">
+       </name>
+       <class
+             value="uk.ac.manchester.cs.owl.explanation.JustificationBasedLogicServiceImpl">
+       </class>
+    </extension>
 
 </plugin>

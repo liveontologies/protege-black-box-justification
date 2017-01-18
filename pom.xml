@@ -87,7 +87,14 @@
 			<version>${protege.version}</version>
 			<scope>provided</scope>
         </dependency>
-        
+
+		<dependency>
+			<groupId>not.org.saa</groupId>
+			<artifactId>protege-explanation-interface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>owlexplanation</artifactId>
