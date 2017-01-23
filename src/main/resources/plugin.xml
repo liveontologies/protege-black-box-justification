@@ -7,7 +7,7 @@
         <class value="uk.ac.manchester.cs.owl.explanation.ExplanationEditorKitHook"/>
     </extension>
 
-    <extension id="JustificationBasedExplanation"
+<!--    <extension id="JustificationBasedExplanation"
                point="org.protege.editor.owl.explanation">
         <name value="Justification Based Explanation"/>
         <class value="uk.ac.manchester.cs.owl.explanation.JustificationBasedExplanationServiceImpl"/>
@@ -18,7 +18,7 @@
                point="org.protege.editor.owl.inconsistentOntologyExplanation">
         <class value="uk.ac.manchester.cs.owl.explanation.InconsistentOntologyExplanationPluginImpl"/>
         <name value="Inconsistent Ontology Explanation"/>
-    </extension>
+    </extension>-->
     <extension
           id="JustificationBasedLogic"
           point="not.org.saa.protege.explanation.joint.service">

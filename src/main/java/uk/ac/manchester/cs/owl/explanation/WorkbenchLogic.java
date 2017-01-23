@@ -24,36 +24,27 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import not.org.saa.protege.explanation.joint.service.AxiomsProgressMonitor;
+
 public class WorkbenchLogic {
 	private OWLEditorKit editorKit;
-
+	
 	private final WorkbenchManager workbenchManager;
 
-	private static final Logger logger = LoggerFactory.getLogger(WorkbenchPanel.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkbenchLogic.class);
 
-	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment) {
+	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, AxiomsProgressMonitor<OWLAxiom> monitor) {
 		this.editorKit = ek;
 		JFrame workspaceFrame = ProtegeManager.getInstance().getFrame(ek.getWorkspace());
 		JustificationManager justificationManager = JustificationManager.getExplanationManager(workspaceFrame,
 				ek.getOWLModelManager());
-		this.workbenchManager = new WorkbenchManager(justificationManager, entailment);
+		this.workbenchManager = new WorkbenchManager(justificationManager, entailment, monitor);
 	}
 
-	public List<Explanation<OWLAxiom>> getExplanations() {
-		try {
-			List<Explanation<OWLAxiom>> explanations = getOrderedExplanations(
-					workbenchManager.getJustifications(workbenchManager.getEntailment()));
-			return explanations;
-		} catch (ExplanationException e) {
-			logger.error("An error occurred whilst computing explanations: {}", e.getMessage(), e);
-			return null;
-		}
-	}
-
-	public ArrayList<ArrayList<OWLAxiom>> getAxioms() {
+	public HashSet<ArrayList<OWLAxiom>> getAxioms() {
 		try {
 			List<Explanation<OWLAxiom>> explanations = getExplanations();
-			ArrayList<ArrayList<OWLAxiom>> axioms = new ArrayList<ArrayList<OWLAxiom>>();
+			HashSet<ArrayList<OWLAxiom>> axioms = new HashSet<ArrayList<OWLAxiom>>();
 			for (int i = 0; i < explanations.size(); i++) {
 				ArrayList<OWLAxiom> list = new ArrayList<OWLAxiom>();
 				for (OWLAxiom explanation : explanations.get(i).getAxioms())
@@ -61,6 +52,22 @@ public class WorkbenchLogic {
 				axioms.add(list);
 			}
 			return axioms;
+		} catch (ExplanationException e) {
+			logger.error("An error occurred whilst computing explanations: {}", e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	public void startComputation(AxiomsProgressMonitor<OWLAxiom> monitor)
+	{
+		workbenchManager.getJustifications(workbenchManager.getEntailment());
+	}
+
+	public List<Explanation<OWLAxiom>> getExplanations() {
+		try {
+			List<Explanation<OWLAxiom>> explanations = getOrderedExplanations(
+					workbenchManager.getJustifications(workbenchManager.getEntailment()));
+			return explanations;
 		} catch (ExplanationException e) {
 			logger.error("An error occurred whilst computing explanations: {}", e.getMessage(), e);
 			return null;
