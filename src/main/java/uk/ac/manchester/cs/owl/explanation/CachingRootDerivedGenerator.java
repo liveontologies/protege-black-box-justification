@@ -42,64 +42,62 @@ import java.util.Set;
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 /**
- * Author: Matthew Horridge The University Of Manchester Information Management Group Date:
- * 03-Oct-2008
+ * Author: Matthew Horridge
+ * The University Of Manchester
+ * Information Management Group
+ * Date: 03-Oct-2008
  */
-public class CachingRootDerivedGenerator implements RootDerivedReasoner, Disposable, OWLModelManagerListener, OWLOntologyChangeListener {
+public class CachingRootDerivedGenerator
+		implements RootDerivedReasoner, Disposable, OWLModelManagerListener, OWLOntologyChangeListener {
 
-    private OWLModelManager modelManager;
+	private OWLModelManager modelManager;
 
-    private Set<OWLClass> rootUnsatClses;
+	private Set<OWLClass> rootUnsatClses;
 
-    private boolean dirty = true;
+	private boolean dirty = true;
 
-    public CachingRootDerivedGenerator(OWLModelManager modelManager) {
-        this.modelManager = modelManager;
-        rootUnsatClses = new HashSet<>();
-        modelManager.addListener(this);
-        modelManager.addOntologyChangeListener(this);
-        dirty = true;
-    }
+	public CachingRootDerivedGenerator(OWLModelManager modelManager) {
+		this.modelManager = modelManager;
+		rootUnsatClses = new HashSet<>();
+		modelManager.addListener(this);
+		modelManager.addOntologyChangeListener(this);
+		dirty = true;
+	}
 
+	public Set<OWLClass> getRootUnsatisfiableClasses() throws ExplanationException {
+		if (dirty) {
+			rootUnsatClses.clear();
+			dirty = false;
+			OWLReasonerFactory rf = new ProtegeOWLReasonerFactoryWrapper(
+					modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
+			RootDerivedReasoner gen = new StructuralRootDerivedReasoner(OWLManager.createOWLOntologyManager(),
+					modelManager.getReasoner(), rf);
+			rootUnsatClses.addAll(gen.getRootUnsatisfiableClasses());
+		}
+		return Collections.unmodifiableSet(rootUnsatClses);
+	}
 
-    public Set<OWLClass> getRootUnsatisfiableClasses() throws ExplanationException {
-        if(dirty) {
-            rootUnsatClses.clear();
-            dirty = false;
-            OWLReasonerFactory rf = new ProtegeOWLReasonerFactoryWrapper(modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
-            RootDerivedReasoner gen = new StructuralRootDerivedReasoner(OWLManager.createOWLOntologyManager(),
-                                                                                    modelManager.getReasoner(),
-                                                                                    rf);
-            rootUnsatClses.addAll(gen.getRootUnsatisfiableClasses());
-        }
-        return Collections.unmodifiableSet(rootUnsatClses);
-    }
+	public Set<OWLClass> getDependentChildClasses(OWLClass owlClass) {
+		return Collections.emptySet();
+	}
 
-    public Set<OWLClass> getDependentChildClasses(OWLClass owlClass) {
-        return Collections.emptySet();
-    }
+	public Set<OWLClass> getDependentDescendantClasses(OWLClass owlClass) {
+		return Collections.emptySet();
+	}
 
-    public Set<OWLClass> getDependentDescendantClasses(OWLClass owlClass) {
-        return Collections.emptySet();
-    }
+	public void ontologiesChanged(List<? extends OWLOntologyChange> list) throws OWLException {
+		dirty = true;
+	}
 
-    public void ontologiesChanged(List<? extends OWLOntologyChange> list) throws OWLException {
-        dirty = true;
-    }
+	public void handleChange(OWLModelManagerChangeEvent event) {
+		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED) || event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
+			dirty = true;
+		}
+	}
 
-
-    public void handleChange(OWLModelManagerChangeEvent event) {
-        if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED) ||
-                event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
-            dirty = true;
-        }
-    }
-
-
-    public void dispose() {
-        modelManager.removeListener(this);
-        modelManager.removeOntologyChangeListener(this);
-    }
+	public void dispose() {
+		modelManager.removeListener(this);
+		modelManager.removeOntologyChangeListener(this);
+	}
 }

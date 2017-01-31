@@ -17,6 +17,7 @@ import org.protege.editor.core.ProtegeManager;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationException;
+import org.semanticweb.owl.explanation.api.ExplanationProgressMonitor;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.ClassExpressionType;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -24,16 +25,14 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import not.org.saa.protege.explanation.joint.service.AxiomsProgressMonitor;
-
 public class WorkbenchLogic {
 	private OWLEditorKit editorKit;
-	
+
 	private final WorkbenchManager workbenchManager;
 
 	private static final Logger logger = LoggerFactory.getLogger(WorkbenchLogic.class);
 
-	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, AxiomsProgressMonitor<OWLAxiom> monitor) {
+	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, ExplanationProgressMonitor<OWLAxiom> monitor) {
 		this.editorKit = ek;
 		JFrame workspaceFrame = ProtegeManager.getInstance().getFrame(ek.getWorkspace());
 		JustificationManager justificationManager = JustificationManager.getExplanationManager(workspaceFrame,
@@ -57,9 +56,8 @@ public class WorkbenchLogic {
 			return null;
 		}
 	}
-	
-	public void startComputation(AxiomsProgressMonitor<OWLAxiom> monitor)
-	{
+
+	public void startComputation() {
 		workbenchManager.getJustifications(workbenchManager.getEntailment());
 	}
 
@@ -112,5 +110,4 @@ public class WorkbenchLogic {
 
 	public void dispose() {
 	}
-
 }

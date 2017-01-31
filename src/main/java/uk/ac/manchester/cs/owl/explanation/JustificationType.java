@@ -8,7 +8,7 @@ package uk.ac.manchester.cs.owl.explanation;
  */
 public enum JustificationType {
 
-    REGULAR,
+	REGULAR,
 
-    LACONIC
+	LACONIC
 }

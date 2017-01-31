@@ -24,15 +24,15 @@ import org.semanticweb.owlapi.model.OWLAxiom;
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 /**
- * Author: Matthew Horridge The University Of Manchester Information Management Group Date:
- * 04-Oct-2008
+ * Author: Matthew Horridge
+ * The University Of Manchester
+ * Information Management Group
+ * Date: 04-Oct-2008
  */
 public interface ExplanationManagerListener {
 
-    void explanationLimitChanged(JustificationManager explanationManager);
+	void explanationLimitChanged(JustificationManager explanationManager);
 
-    void explanationsComputed(OWLAxiom entailment);
-
+	void explanationsComputed(OWLAxiom entailment);
 }

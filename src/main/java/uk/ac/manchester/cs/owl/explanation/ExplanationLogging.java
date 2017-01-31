@@ -10,6 +10,5 @@ import org.slf4j.MarkerFactory;
  */
 public interface ExplanationLogging {
 
-    public static final Marker MARKER = MarkerFactory.getMarker("Explanation");
-
+	public static final Marker MARKER = MarkerFactory.getMarker("Explanation");
 }

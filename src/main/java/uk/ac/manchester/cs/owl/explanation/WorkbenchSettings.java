@@ -8,33 +8,33 @@ package uk.ac.manchester.cs.owl.explanation;
  */
 public class WorkbenchSettings {
 
-    private JustificationType justificationType = JustificationType.REGULAR;
-    
-    private int limit = 2;
+	private JustificationType justificationType = JustificationType.REGULAR;
 
-    private boolean findAll = true;
+	private int limit = 2;
 
-    public JustificationType getJustificationType() {
-        return justificationType;
-    }
+	private boolean findAll = true;
 
-    public void setJustificationType(JustificationType justificationType) {
-        this.justificationType = justificationType;
-    }
+	public JustificationType getJustificationType() {
+		return justificationType;
+	}
 
-    public int getLimit() {
-        return limit;
-    }
+	public void setJustificationType(JustificationType justificationType) {
+		this.justificationType = justificationType;
+	}
 
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
+	public int getLimit() {
+		return limit;
+	}
 
-    public boolean isFindAllExplanations() {
-        return findAll;
-    }
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
 
-    public void setFindAllExplanations(boolean findAllExplanations) {
-        findAll = findAllExplanations;
-    }
+	public boolean isFindAllExplanations() {
+		return findAll;
+	}
+
+	public void setFindAllExplanations(boolean findAllExplanations) {
+		findAll = findAllExplanations;
+	}
 }

@@ -38,36 +38,38 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
  */
 public class ProtegeOWLReasonerFactoryWrapper implements OWLReasonerFactory {
 
-    private ProtegeOWLReasonerInfo info;
+	private ProtegeOWLReasonerInfo info;
 
-    private OWLReasonerFactory reasonerFactory;
+	private OWLReasonerFactory reasonerFactory;
 
-    public ProtegeOWLReasonerFactoryWrapper(ProtegeOWLReasonerInfo info) {
-        this.info = info;
-        this.reasonerFactory = info.getReasonerFactory();
-    }
+	public ProtegeOWLReasonerFactoryWrapper(ProtegeOWLReasonerInfo info) {
+		this.info = info;
+		this.reasonerFactory = info.getReasonerFactory();
+	}
 
-    public ProtegeOWLReasonerFactoryWrapper(OWLEditorKit editorKit) {
-        this(editorKit.getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory());
-    }
+	public ProtegeOWLReasonerFactoryWrapper(OWLEditorKit editorKit) {
+		this(editorKit.getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory());
+	}
 
-    public String getReasonerName() {
-        return reasonerFactory.getReasonerName();
-    }
+	public String getReasonerName() {
+		return reasonerFactory.getReasonerName();
+	}
 
-    public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
-        return reasonerFactory.createReasoner(ontology);
-    }
+	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
+		return reasonerFactory.createReasoner(ontology);
+	}
 
-    public OWLReasoner createReasoner(OWLOntology ontology) {
-        return reasonerFactory.createReasoner(ontology);
-    }
+	public OWLReasoner createReasoner(OWLOntology ontology) {
+		return reasonerFactory.createReasoner(ontology);
+	}
 
-    public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration owlReasonerConfiguration) throws IllegalConfigurationException {
-        return reasonerFactory.createReasoner(ontology);
-    }
+	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology,
+			OWLReasonerConfiguration owlReasonerConfiguration) throws IllegalConfigurationException {
+		return reasonerFactory.createReasoner(ontology);
+	}
 
-    public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration owlReasonerConfiguration) throws IllegalConfigurationException {
-        return reasonerFactory.createReasoner(ontology);
-    }
+	public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration owlReasonerConfiguration)
+			throws IllegalConfigurationException {
+		return reasonerFactory.createReasoner(ontology);
+	}
 }

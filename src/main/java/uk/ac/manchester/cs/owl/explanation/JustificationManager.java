@@ -12,16 +12,11 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import not.org.saa.protege.explanation.joint.service.AxiomsProgressMonitor;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static uk.ac.manchester.cs.owl.explanation.ExplanationLogging.MARKER;
 /*
@@ -47,301 +42,217 @@ import static uk.ac.manchester.cs.owl.explanation.ExplanationLogging.MARKER;
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 /**
- * Author: Matthew Horridge The University Of Manchester Information Management Group Date:
- * 03-Oct-2008
+ * Author: Matthew Horridge
+ * The University Of Manchester
+ * Information Management Group
+ * Date: 03-Oct-2008
  * Manages aspects of explanation in Protege 4.
  */
 public class JustificationManager implements Disposable, OWLReasonerProvider {
 
-    private ExecutorService executorService;
+	private final OWLOntologyChangeListener ontologyChangeListener;
 
-    private final OWLOntologyChangeListener ontologyChangeListener;
+	public static final String KEY = "uk.ac.manchester.cs.owl.explanation";
 
-    public static final String KEY = "uk.ac.manchester.cs.owl.explanation";
+	private static final Logger logger = LoggerFactory.getLogger(JustificationManager.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(JustificationManager.class);
+	private OWLModelManager modelManager;
 
-    private OWLModelManager modelManager;
+	private CachingRootDerivedGenerator rootDerivedGenerator;
 
-    private CachingRootDerivedGenerator rootDerivedGenerator;
+	private List<ExplanationManagerListener> listeners;
 
-    private List<ExplanationManagerListener> listeners;
+	private int explanationLimit;
 
-    private int explanationLimit;
+	private boolean findAllExplanations;
 
-    private boolean findAllExplanations;
+	private JustificationCacheManager justificationCacheManager = new JustificationCacheManager();
 
-    private JustificationCacheManager justificationCacheManager = new JustificationCacheManager();
-    
-    //private JustificationGeneratorProgressDialog progressDialog;
-    
-    private AxiomsProgressMonitor<OWLAxiom> monitor;
+	private JustificationManager(JFrame parentWindow, OWLModelManager modelManager) {
+		this.modelManager = modelManager;
+		rootDerivedGenerator = new CachingRootDerivedGenerator(modelManager);
+		listeners = new ArrayList<>();
+		explanationLimit = 2;
+		findAllExplanations = true;
+		ontologyChangeListener = changes -> justificationCacheManager.clear();
+		modelManager.addOntologyChangeListener(ontologyChangeListener);
+	}
 
-    private JustificationManager(JFrame parentWindow, OWLModelManager modelManager) {
-        this.modelManager = modelManager;
-        this.monitor = monitor;
-        rootDerivedGenerator = new CachingRootDerivedGenerator(modelManager);
-        listeners = new ArrayList<>();
-        explanationLimit = 2;
-        findAllExplanations = true;
-        //progressDialog = new JustificationGeneratorProgressDialog(parentWindow);
-        executorService = Executors.newSingleThreadExecutor();
-        ontologyChangeListener = changes -> justificationCacheManager.clear();
-        modelManager.addOntologyChangeListener(ontologyChangeListener);
-    }
+	public OWLReasonerProvider getReasonerProvider() {
+		return this;
+	}
 
+	public OWLReasonerFactory getReasonerFactory() {
+		return new ProtegeOWLReasonerFactoryWrapper(modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
+	}
 
-    public OWLReasonerProvider getReasonerProvider() {
-        return this;
-    }
+	public int getExplanationLimit() {
+		return explanationLimit;
+	}
 
-    public OWLReasonerFactory getReasonerFactory() {
-        return new ProtegeOWLReasonerFactoryWrapper(modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
-    }
+	public void setExplanationLimit(int explanationLimit) {
+		this.explanationLimit = explanationLimit;
+		fireExplanationLimitChanged();
+	}
 
-    public int getExplanationLimit() {
-        return explanationLimit;
-    }
+	public boolean isFindAllExplanations() {
+		return findAllExplanations;
+	}
 
-    public void setExplanationLimit(int explanationLimit) {
-        this.explanationLimit = explanationLimit;
-        fireExplanationLimitChanged();
-    }
+	public void setFindAllExplanations(boolean findAllExplanations) {
+		this.findAllExplanations = findAllExplanations;
+		fireExplanationLimitChanged();
+	}
 
+	public OWLReasoner getReasoner() {
+		return modelManager.getReasoner();
+	}
 
-    public boolean isFindAllExplanations() {
-        return findAllExplanations;
-    }
+	/**
+	 * Gets the number of explanations that have actually been computed for an
+	 * entailment
+	 * 
+	 * @param entailment
+	 *            The entailment
+	 * @param type
+	 *            The type of justification to be counted.
+	 * @return The number of computed explanations. If no explanations have been
+	 *         computed this value will be -1.
+	 */
+	public int getComputedExplanationCount(OWLAxiom entailment, JustificationType type) {
+		JustificationCache cache = justificationCacheManager.getJustificationCache(type);
+		if (cache.contains(entailment)) {
+			return cache.get(entailment).size();
+		} else {
+			return -1;
+		}
+	}
 
+	public Set<Explanation<OWLAxiom>> getJustifications(OWLAxiom entailment, JustificationType type,
+			ExplanationProgressMonitor<OWLAxiom> monitor) throws ExplanationException {
+		JustificationCache cache = justificationCacheManager.getJustificationCache(type);
+		if (!cache.contains(entailment)) {
+			Set<Explanation<OWLAxiom>> expls = computeJustifications(entailment, type, monitor);
+			cache.put(expls);
+		}
+		return cache.get(entailment);
+	}
 
-    public void setFindAllExplanations(boolean findAllExplanations) {
-        this.findAllExplanations = findAllExplanations;
-        fireExplanationLimitChanged();
-    }
+	public Explanation<OWLAxiom> getLaconicJustification(Explanation<OWLAxiom> explanation) {
+		Set<Explanation<OWLAxiom>> explanations = getLaconicExplanations(explanation, 1);
+		if (explanations.isEmpty()) {
+			return Explanation.getEmptyExplanation(explanation.getEntailment());
+		} else {
+			return explanations.iterator().next();
+		}
+	}
 
+	private Set<Explanation<OWLAxiom>> computeJustifications(OWLAxiom entailment, JustificationType justificationType,
+			ExplanationProgressMonitor<OWLAxiom> monitor) throws ExplanationException {
+		logger.info(LogBanner.start("Computing Justifications"));
+		logger.info(MARKER, "Computing justifications for {}", entailment);
+		Set<OWLAxiom> axioms = new HashSet<>();
+		for (OWLOntology ont : modelManager.getActiveOntologies()) {
+			axioms.addAll(ont.getAxioms());
+		}
+		ExplanationGeneratorFactory<OWLAxiom> factory = getCurrentExplanationGeneratorFactory(justificationType, monitor);
+		ExplanationGenerator<OWLAxiom> generator = factory.createExplanationGenerator(axioms, monitor);
+		Set<Explanation<OWLAxiom>> explanations = generator.getExplanations(entailment);
+		logger.info(MARKER, "A total of {} explanations have been computed", explanations.size());
+		fireExplanationsComputed(entailment);
+		logger.info(LogBanner.end());
+		return explanations;
+	}
 
-    public OWLReasoner getReasoner() {
-        return modelManager.getReasoner();
-    }
+	private ExplanationGeneratorFactory<OWLAxiom> getCurrentExplanationGeneratorFactory(JustificationType type,
+			ExplanationProgressMonitor<OWLAxiom> monitor) {
+		OWLReasoner reasoner = modelManager.getOWLReasonerManager().getCurrentReasoner();
+		if (reasoner.isConsistent()) {
+			if (type.equals(JustificationType.LACONIC)) {
+				OWLReasonerFactory rf = getReasonerFactory();
+				return ExplanationManager.createLaconicExplanationGeneratorFactory(rf, monitor);
+			} else {
+				OWLReasonerFactory rf = getReasonerFactory();
+				return ExplanationManager.createExplanationGeneratorFactory(rf, monitor);
+			}
+		} else {
+			if (type.equals(JustificationType.LACONIC)) {
+				OWLReasonerFactory rf = getReasonerFactory();
+				InconsistentOntologyExplanationGeneratorFactory fac = new InconsistentOntologyExplanationGeneratorFactory(
+						rf, Long.MAX_VALUE);
+				return new LaconicExplanationGeneratorFactory<>(fac);
+			} else {
+				OWLReasonerFactory rf = getReasonerFactory();
+				return new InconsistentOntologyExplanationGeneratorFactory(rf, Long.MAX_VALUE);
+			}
+		}
 
+	}
 
-    /**
-     * Gets the number of explanations that have actually been computed for an entailment
-     * @param entailment The entailment
-     * @param type The type of justification to be counted.
-     * @return The number of computed explanations.  If no explanations have been computed this value
-     *         will be -1.
-     */
-    public int getComputedExplanationCount(OWLAxiom entailment, JustificationType type) {
-        JustificationCache cache = justificationCacheManager.getJustificationCache(type);
-        if(cache.contains(entailment)) {
-            return cache.get(entailment).size();
-        }
-        else {
-            return  -1;
-        }
-    }
+	public OWLOntologyManager getExplanationOntologyManager() {
+		return modelManager.getOWLOntologyManager();
+	}
 
-    public Set<Explanation<OWLAxiom>> getJustifications(OWLAxiom entailment, JustificationType type, ExplanationProgressMonitor monitor) throws ExplanationException {
-        JustificationCache cache = justificationCacheManager.getJustificationCache(type);
-        if (!cache.contains(entailment)) {
-            Set<Explanation<OWLAxiom>> expls = computeJustifications(entailment, type, monitor);
-            cache.put(expls);
-        }
-        return cache.get(entailment);
-    }
+	public Set<Explanation<OWLAxiom>> getLaconicExplanations(Explanation<OWLAxiom> explanation, int limit)
+			throws ExplanationException {
+		return computeLaconicExplanations(explanation, limit);
+	}
 
-    public Explanation<OWLAxiom> getLaconicJustification(Explanation<OWLAxiom> explanation) {
-        Set<Explanation<OWLAxiom>> explanations = getLaconicExplanations(explanation, 1);
-        if(explanations.isEmpty()) {
-            return Explanation.getEmptyExplanation(explanation.getEntailment());
-        }
-        else {
-            return explanations.iterator().next();
-        }
-    }
+	private Set<Explanation<OWLAxiom>> computeLaconicExplanations(Explanation<OWLAxiom> explanation, int limit)
+			throws ExplanationException {
+		try {
+			if (modelManager.getReasoner().isConsistent()) {
+				OWLReasonerFactory rf = getReasonerFactory();
+				ExplanationGenerator<OWLAxiom> g = org.semanticweb.owl.explanation.api.ExplanationManager
+						.createLaconicExplanationGeneratorFactory(rf)
+						.createExplanationGenerator(explanation.getAxioms());
+				return g.getExplanations(explanation.getEntailment(), limit);
+			} else {
+				OWLReasonerFactory rf = getReasonerFactory();
+				InconsistentOntologyExplanationGeneratorFactory fac = new InconsistentOntologyExplanationGeneratorFactory(
+						rf, Long.MAX_VALUE);
+				LaconicExplanationGeneratorFactory<OWLAxiom> lacFac = new LaconicExplanationGeneratorFactory<>(fac);
+				ExplanationGenerator<OWLAxiom> g = lacFac.createExplanationGenerator(explanation.getAxioms());
+				return g.getExplanations(explanation.getEntailment(), limit);
+			}
+		} catch (ExplanationException e) {
+			throw new ExplanationException(e);
+		}
+	}
 
+	public void dispose() {
+		rootDerivedGenerator.dispose();
+		modelManager.removeOntologyChangeListener(ontologyChangeListener);
+	}
 
-    private Set<Explanation<OWLAxiom>> computeJustifications(OWLAxiom entailment, JustificationType justificationType, ExplanationProgressMonitor monitor) throws ExplanationException {
-        logger.info(LogBanner.start("Computing Justifications"));
-        logger.info(MARKER, "Computing justifications for {}", entailment);
-        Set<OWLAxiom> axioms = new HashSet<>();
-        for (OWLOntology ont : modelManager.getActiveOntologies()) {
-            axioms.addAll(ont.getAxioms());
-        }
-        
-        ExplanationGenerator<OWLAxiom> delegate = getCurrentExplanationGeneratorFactory(justificationType, monitor).createExplanationGenerator(axioms, monitor);
-        delegate.getExplanations(entailment);
-        
-//        ExplanationGeneratorCallable callable = new ExplanationGeneratorCallable(
-//                axioms,
-//                entailment,
-//                getCurrentExplanationGeneratorFactory(justificationType, monitor),
-//                findAllExplanations,
-//                monitor);
-//        try {
-//            executorService.submit(callable);
-//        }
-//        catch (ExplanationGeneratorInterruptedException e) {
-//            logger.info(MARKER, "Justification computation terminated early by user");
-//        }
-//        
-        HashSet<Explanation<OWLAxiom>> explanations = new HashSet<>(/*callable.found*/);
-        logger.info(MARKER, "A total of {} explanations have been computed", explanations.size());
-        fireExplanationsComputed(entailment);
-        logger.info(LogBanner.end());
-        return explanations;
-    }
+	public void addListener(ExplanationManagerListener lsnr) {
+		listeners.add(lsnr);
+	}
 
+	public void removeListener(ExplanationManagerListener lsnr) {
+		listeners.remove(lsnr);
+	}
 
-    private ExplanationGeneratorFactory<OWLAxiom> getCurrentExplanationGeneratorFactory(JustificationType type, ExplanationProgressMonitor monitor) {
-        OWLReasoner reasoner = modelManager.getOWLReasonerManager().getCurrentReasoner();
-        if(reasoner.isConsistent()) {
-            if (type.equals(JustificationType.LACONIC)) {
-                OWLReasonerFactory rf = getReasonerFactory();
-                return ExplanationManager.createLaconicExplanationGeneratorFactory(rf, monitor);
-            }
-            else {
-                OWLReasonerFactory rf = getReasonerFactory();
-                return ExplanationManager.createExplanationGeneratorFactory(rf, monitor);
-            }    
-        }
-        else {
-            if (type.equals(JustificationType.LACONIC)) {
-                OWLReasonerFactory rf = getReasonerFactory();
-                InconsistentOntologyExplanationGeneratorFactory fac = new InconsistentOntologyExplanationGeneratorFactory(rf, Long.MAX_VALUE);
-                return new LaconicExplanationGeneratorFactory<>(fac);
-            }
-            else {
-                OWLReasonerFactory rf = getReasonerFactory();
-                return new InconsistentOntologyExplanationGeneratorFactory(rf, Long.MAX_VALUE);
-            }
-        }
-        
-    }
+	protected void fireExplanationLimitChanged() {
+		for (ExplanationManagerListener lsnr : new ArrayList<>(listeners)) {
+			lsnr.explanationLimitChanged(this);
+		}
+	}
 
-    public OWLOntologyManager getExplanationOntologyManager() {
-        return modelManager.getOWLOntologyManager();
-    }
+	protected void fireExplanationsComputed(OWLAxiom entailment) {
+		for (ExplanationManagerListener lsnr : new ArrayList<>(listeners)) {
+			lsnr.explanationsComputed(entailment);
+		}
+	}
 
-
-    public Set<Explanation<OWLAxiom>> getLaconicExplanations(Explanation<OWLAxiom> explanation, int limit) throws ExplanationException {
-        return computeLaconicExplanations(explanation, limit);
-    }
-
-
-    private Set<Explanation<OWLAxiom>> computeLaconicExplanations(Explanation<OWLAxiom> explanation, int limit) throws ExplanationException {
-        try {
-            if(modelManager.getReasoner().isConsistent()) {
-                OWLReasonerFactory rf = getReasonerFactory();
-                ExplanationGenerator<OWLAxiom> g = org.semanticweb.owl.explanation.api.ExplanationManager.createLaconicExplanationGeneratorFactory(rf).createExplanationGenerator(explanation.getAxioms());
-                return g.getExplanations(explanation.getEntailment(), limit);
-            }
-            else {
-                OWLReasonerFactory rf = getReasonerFactory();
-                InconsistentOntologyExplanationGeneratorFactory fac = new InconsistentOntologyExplanationGeneratorFactory(rf, Long.MAX_VALUE);
-                LaconicExplanationGeneratorFactory<OWLAxiom> lacFac = new LaconicExplanationGeneratorFactory<>(fac);
-                ExplanationGenerator<OWLAxiom> g = lacFac.createExplanationGenerator(explanation.getAxioms());
-                return g.getExplanations(explanation.getEntailment(), limit);
-            }
-        }
-        catch (ExplanationException e) {
-            throw new ExplanationException(e);
-        }
-    }
-
-
-    public void dispose() {
-        rootDerivedGenerator.dispose();
-        modelManager.removeOntologyChangeListener(ontologyChangeListener);
-    }
-
-
-    public void addListener(ExplanationManagerListener lsnr) {
-        listeners.add(lsnr);
-    }
-
-    public void removeListener(ExplanationManagerListener lsnr) {
-        listeners.remove(lsnr);
-    }
-
-    protected void fireExplanationLimitChanged() {
-        for (ExplanationManagerListener lsnr : new ArrayList<>(listeners)) {
-            lsnr.explanationLimitChanged(this);
-        }
-    }
-
-    protected void fireExplanationsComputed(OWLAxiom entailment) {
-        for (ExplanationManagerListener lsnr : new ArrayList<>(listeners)) {
-            lsnr.explanationsComputed(entailment);
-        }
-    }
-
-    public static synchronized JustificationManager getExplanationManager(JFrame parentWindow, OWLModelManager modelManager) {
-        JustificationManager m = modelManager.get(KEY);
-        if (m == null) {
-            m = new JustificationManager(parentWindow, modelManager);
-            modelManager.put(KEY, m);
-        }
-        return m;
-    }
-    
-    private static class ExplanationGeneratorCallable implements Callable<Set<Explanation<OWLAxiom>>>, ExplanationProgressMonitor<OWLAxiom> {
-
-        private final Set<OWLAxiom> axioms;
-
-        private final OWLAxiom axiom;
-
-        private int limit = Integer.MAX_VALUE;
-
-        private final Set<Explanation<OWLAxiom>> found = new HashSet<>();
-
-        private final ExplanationProgressMonitor<OWLAxiom> progressMonitor;
-
-        private final boolean findAllExplanations;
-
-        private final ExplanationGeneratorFactory<OWLAxiom> factory;
-
-        private ExplanationGeneratorCallable(Set<OWLAxiom> axioms, OWLAxiom axiom, ExplanationGeneratorFactory<OWLAxiom> factory, boolean findAllExplanations, ExplanationProgressMonitor<OWLAxiom> progressMonitor) {
-            this.axioms = axioms;
-            this.axiom = axiom;
-            this.progressMonitor = progressMonitor;
-            this.findAllExplanations = findAllExplanations;
-            this.factory = factory;
-        }
-
-        /**
-         * Computes a result, or throws an exception if unable to do so.
-         * @return computed result
-         * @throws Exception if unable to compute a result
-         */
-        public Set<Explanation<OWLAxiom>> call() throws Exception {
-            found.clear();
-            ExplanationGenerator<OWLAxiom> delegate = factory.createExplanationGenerator(axioms, this);
-            try {
-                if (findAllExplanations) {
-                    delegate.getExplanations(axiom);
-                }
-                else {
-                    delegate.getExplanations(axiom, limit);
-                }
-            }
-            finally {
-            }
-
-            return found;
-        }
-
-        public void foundExplanation(ExplanationGenerator<OWLAxiom> explanationGenerator, Explanation<OWLAxiom> explanation, Set<Explanation<OWLAxiom>> explanations) {
-        	progressMonitor.foundExplanation(explanationGenerator, explanation, explanations);
-            logger.info(MARKER, "Explanation {} found", found.size(), explanation.getEntailment());
-        }
-
-        public boolean isCancelled() {
-            return progressMonitor.isCancelled();
-        }
-    }
-
+	public static synchronized JustificationManager getExplanationManager(JFrame parentWindow,
+			OWLModelManager modelManager) {
+		JustificationManager m = modelManager.get(KEY);
+		if (m == null) {
+			m = new JustificationManager(parentWindow, modelManager);
+			modelManager.put(KEY, m);
+		}
+		return m;
+	}
 }

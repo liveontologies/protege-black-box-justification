@@ -25,12 +25,13 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 /**
- * Author: Matthew Horridge The University Of Manchester Information Management Group Date:
- * 26-Sep-2008
+ * Author: Matthew Horridge
+ * The University Of Manchester
+ * Information Management Group
+ * Date: 26-Sep-2008
  */
 public interface OWLReasonerProvider {
 
-    OWLReasoner getReasoner();
+	OWLReasoner getReasoner();
 }
