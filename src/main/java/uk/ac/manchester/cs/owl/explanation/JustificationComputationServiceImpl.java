@@ -5,7 +5,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import not.org.saa.protege.explanation.joint.service.JustificationComputation;
 import not.org.saa.protege.explanation.joint.service.JustificationComputationService;
 
-public class JustificationBasedLogicServiceImpl extends JustificationComputationService {
+public class JustificationComputationServiceImpl extends JustificationComputationService {
 
 	@Override
 	public void initialise() throws Exception {
