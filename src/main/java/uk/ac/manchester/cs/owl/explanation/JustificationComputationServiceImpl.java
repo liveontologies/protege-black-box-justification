@@ -21,7 +21,12 @@ public class JustificationComputationServiceImpl extends JustificationComputatio
 	}
 
 	@Override
-	public JustificationComputation creareComputation(OWLAxiom entailment) {
+	public JustificationComputation createComputation(OWLAxiom entailment) {
 		return new JustificationComputator(entailment, getOWLEditorKit());
+	}
+
+	@Override
+	public String getName() {
+		return "Workbench Justification Service";
 	}
 }

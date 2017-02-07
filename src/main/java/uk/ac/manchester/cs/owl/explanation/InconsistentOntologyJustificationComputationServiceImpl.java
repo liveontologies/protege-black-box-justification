@@ -8,7 +8,7 @@ import not.org.saa.protege.explanation.joint.service.JustificationComputation;
 public class InconsistentOntologyJustificationComputationServiceImpl extends InconsistentOntologyJustificationComputationService {
 
 	@Override
-	public JustificationComputation creareComputation(OWLAxiom entailment) {
+	public JustificationComputation createComputation(OWLAxiom entailment) {
 		return new JustificationComputator(entailment, getOWLEditorKit());
 	}
 
@@ -18,5 +18,10 @@ public class InconsistentOntologyJustificationComputationServiceImpl extends Inc
 
 	@Override
 	public void dispose() throws Exception {
+	}
+
+	@Override
+	public String getName() {
+		return "Workbench Inconsistent Ontology Justification Service";
 	}
 }
