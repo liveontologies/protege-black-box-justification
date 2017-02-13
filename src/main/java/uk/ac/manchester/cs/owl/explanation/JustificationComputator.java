@@ -22,6 +22,7 @@ public class JustificationComputator extends JustificationComputation {
 
 	public JustificationComputator(OWLAxiom entailment, OWLEditorKit kit) {
 		super(entailment);
+		//!!! should probably be moved from constructor to speed up the process
 		listeners = new ArrayList<JustificationComputationListener>();
 		JustificationProgressMonitor monitor = new JustificationProgressMonitor(this);
 		logic = new WorkbenchLogic(kit, entailment, monitor);

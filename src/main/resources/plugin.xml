@@ -13,19 +13,10 @@
           id="JustificationService"
           point="not.org.saa.protege.explanation.joint.JustificationService">
        <name
-             value="Justification Logic">
+             value="Justification Service">
        </name>
        <class
-             value="uk.ac.manchester.cs.owl.explanation.JustificationComputationServiceImpl"></class>
-    </extension>
-    <extension
-          id="InconsistentOntologyJustificationService"
-          point="not.org.saa.protege.explanation.joint.InconsistentOntologyJustificationService">
-       <name
-             value="Inconsistent Ontology Justification Logic">
-       </name>
-       <class
-             value="uk.ac.manchester.cs.owl.explanation.InconsistentOntologyJustificationComputationServiceImpl">
+             value="uk.ac.manchester.cs.owl.explanation.JustificationComputationServiceImpl">
        </class>
     </extension>
 
