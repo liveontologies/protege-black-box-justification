@@ -131,12 +131,14 @@ public class JustificationManager implements Disposable, OWLReasonerProvider {
 
 	public Set<Explanation<OWLAxiom>> getJustifications(OWLAxiom entailment, JustificationType type,
 			ExplanationProgressMonitor<OWLAxiom> monitor) throws ExplanationException {
-		JustificationCache cache = justificationCacheManager.getJustificationCache(type);
-		if (!cache.contains(entailment)) {
-			Set<Explanation<OWLAxiom>> expls = computeJustifications(entailment, type, monitor);
-			cache.put(expls);
-		}
-		return cache.get(entailment);
+//		JustificationCache cache = justificationCacheManager.getJustificationCache(type);
+//		if (!cache.contains(entailment)) {
+//			Set<Explanation<OWLAxiom>> expls = computeJustifications(entailment, type, monitor);
+//			cache.put(expls);
+//		}
+//		return cache.get(entailment);
+		
+		return computeJustifications(entailment, type, monitor);
 	}
 
 	public Explanation<OWLAxiom> getLaconicJustification(Explanation<OWLAxiom> explanation) {

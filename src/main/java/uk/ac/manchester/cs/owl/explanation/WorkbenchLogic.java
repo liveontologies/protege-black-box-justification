@@ -32,12 +32,12 @@ public class WorkbenchLogic {
 
 	private static final Logger logger = LoggerFactory.getLogger(WorkbenchLogic.class);
 
-	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, ExplanationProgressMonitor<OWLAxiom> monitor) {
+	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, ExplanationProgressMonitor<OWLAxiom> monitor, WorkbenchSettings workbenchSettings) {
 		this.editorKit = ek;
 		JFrame workspaceFrame = ProtegeManager.getInstance().getFrame(ek.getWorkspace());
 		JustificationManager justificationManager = JustificationManager.getExplanationManager(workspaceFrame,
 				ek.getOWLModelManager());
-		this.workbenchManager = new WorkbenchManager(justificationManager, entailment, monitor);
+		this.workbenchManager = new WorkbenchManager(justificationManager, entailment, monitor, workbenchSettings);
 	}
 
 	public HashSet<ArrayList<OWLAxiom>> getAxioms() {

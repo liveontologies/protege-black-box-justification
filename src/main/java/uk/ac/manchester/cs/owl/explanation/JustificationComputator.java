@@ -20,12 +20,12 @@ public class JustificationComputator extends JustificationComputation {
 	private List<JustificationComputationListener> listeners;
 	private WorkbenchLogic logic;
 
-	public JustificationComputator(OWLAxiom entailment, OWLEditorKit kit) {
+	public JustificationComputator(OWLAxiom entailment, OWLEditorKit kit, WorkbenchSettings workbenchSettings) {
 		super(entailment);
 		//!!! should probably be moved from constructor to speed up the process
 		listeners = new ArrayList<JustificationComputationListener>();
 		JustificationProgressMonitor monitor = new JustificationProgressMonitor(this);
-		logic = new WorkbenchLogic(kit, entailment, monitor);
+		logic = new WorkbenchLogic(kit, entailment, monitor, workbenchSettings);
 	}
 
 	@Override

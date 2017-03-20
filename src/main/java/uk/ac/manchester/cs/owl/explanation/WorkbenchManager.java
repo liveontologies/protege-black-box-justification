@@ -17,16 +17,17 @@ import java.util.Set;
  */
 public class WorkbenchManager {
 
-	private WorkbenchSettings workbenchSettings = new WorkbenchSettings();
+	private WorkbenchSettings workbenchSettings;
 	private JustificationManager justificationManager;
 	private OWLAxiom entailment;
 	private ExplanationProgressMonitor<OWLAxiom> monitor;
 
 	public WorkbenchManager(JustificationManager justificationManager, OWLAxiom entailment,
-			ExplanationProgressMonitor<OWLAxiom> monitor) {
+			ExplanationProgressMonitor<OWLAxiom> monitor, WorkbenchSettings workbenchSettings) {
 		this.justificationManager = justificationManager;
 		this.entailment = entailment;
 		this.monitor = monitor;
+		this.workbenchSettings = workbenchSettings;
 	}
 
 	public ExplanationProgressMonitor<OWLAxiom> getMonitor() {
