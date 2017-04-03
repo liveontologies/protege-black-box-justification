@@ -89,8 +89,8 @@
         </dependency>
 
 		<dependency>
-			<groupId>not.org.saa</groupId>
-			<artifactId>protege-explanation-interface</artifactId>
+			<groupId>org.liveontologies</groupId>
+			<artifactId>protege-justification-explanation</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>

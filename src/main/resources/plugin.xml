@@ -11,7 +11,7 @@
     </extension>
     <extension
           id="JustificationService"
-          point="not.org.saa.protege.explanation.joint.JustificationService">
+          point="org.liveontologies.protege.explanation.justification.JustificationService">
        <name
              value="Justification Service">
        </name>

@@ -10,11 +10,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.liveontologies.protege.explanation.justification.service.ComputationService;
+import org.liveontologies.protege.explanation.justification.service.ComputationServiceListener;
+import org.liveontologies.protege.explanation.justification.service.JustificationComputation;
 import org.semanticweb.owlapi.model.OWLAxiom;
-
-import not.org.saa.protege.explanation.joint.service.JustificationComputation;
-import not.org.saa.protege.explanation.joint.service.ComputationService;
-import not.org.saa.protege.explanation.joint.service.ComputationServiceListener;
 
 public class JustificationComputationServiceImpl extends ComputationService {
 

@@ -5,14 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.liveontologies.protege.explanation.justification.service.JustificationComputation;
+import org.liveontologies.protege.explanation.justification.service.JustificationComputationListener;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationProgressMonitor;
 import org.semanticweb.owlapi.model.OWLAxiom;
-
-import not.org.saa.protege.explanation.joint.service.JustificationComputationListener;
-import not.org.saa.protege.explanation.joint.service.JustificationComputation;
 
 public class JustificationComputator extends JustificationComputation {
 
