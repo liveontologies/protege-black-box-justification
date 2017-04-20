@@ -1,36 +1,12 @@
 <?xml version="1.0" ?>
 
 <plugin>
-   <requires>
-      <import plugin="not.org.saa.protege.explanation.joint"/>
-   </requires>
+	<requires>
+		<import plugin="org.liveontologies.protege.explanation.justification.service"/>
+	</requires>
 
-
-    <extension id="explanationoverride" point="org.protege.editor.core.application.EditorKitHook">
-        <class value="uk.ac.manchester.cs.owl.explanation.ExplanationEditorKitHook"/>
-    </extension>
-    <extension
-          id="JustificationService"
-          point="org.liveontologies.protege.explanation.justification.JustificationService">
-       <name
-             value="Justification Service">
-       </name>
-       <class
-             value="uk.ac.manchester.cs.owl.explanation.JustificationComputationServiceImpl">
-       </class>
-    </extension>
-
-<!--    <extension id="JustificationBasedExplanation"
-               point="org.protege.editor.owl.explanation">
-        <name value="Justification Based Explanation"/>
-        <class value="uk.ac.manchester.cs.owl.explanation.JustificationBasedExplanationServiceImpl"/>
-    </extension>
-
-
-    <extension id="BlackBoxInconsistentOntologyExplanationGenerator"
-               point="org.protege.editor.owl.inconsistentOntologyExplanation">
-        <class value="uk.ac.manchester.cs.owl.explanation.InconsistentOntologyExplanationPluginImpl"/>
-        <name value="Inconsistent Ontology Explanation"/>
-    </extension>-->
-
+	<extension id="JustificationService" point="org.liveontologies.protege.explanation.justification.JustificationService">
+		<name value="Justification Service" />
+		<class value="org.liveontologies.protege.explanation.justification.blackbox.JustificationComputationServiceImpl" />
+	</extension>
 </plugin>
