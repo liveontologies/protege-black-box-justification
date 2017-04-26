@@ -22,7 +22,6 @@ package org.liveontologies.protege.explanation.justification.blackbox;
  * #L%
  */
 
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.liveontologies.protege.explanation.justification.service.ComputationService;
-import org.liveontologies.protege.explanation.justification.service.ComputationServiceListener;
 import org.liveontologies.protege.explanation.justification.service.JustificationComputation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -59,13 +57,15 @@ public class JustificationComputationServiceImpl extends ComputationService {
 	}
 
 	@Override
-	public JustificationComputation createJustificationComputation(OWLAxiom entailment) {
-		return new JustificationComputator(entailment, getOWLEditorKit(), workbenchSettings);
+	public JustificationComputation createJustificationComputation(
+			OWLAxiom entailment) {
+		return new JustificationComputator(entailment, getOWLEditorKit(),
+				workbenchSettings);
 	}
 
 	@Override
 	public String getName() {
-		return "Workbench Justification";
+		return "Black-Box Justifications";
 	}
 
 	@Override
@@ -77,24 +77,30 @@ public class JustificationComputationServiceImpl extends ComputationService {
 
 		public SettingsPanel() {
 			setLayout(new GridBagLayout());
-			JRadioButton regularButton = new JRadioButton(new AbstractAction("Show regular justifications") {
-				public void actionPerformed(ActionEvent e) {
-					workbenchSettings.setJustificationType(JustificationType.REGULAR);
-					settingsChanged();
-				}
-			});
+			JRadioButton regularButton = new JRadioButton(
+					new AbstractAction("Show regular justifications") {
+						public void actionPerformed(ActionEvent e) {
+							workbenchSettings.setJustificationType(
+									JustificationType.REGULAR);
+							settingsChanged();
+						}
+					});
 			regularButton.setSelected(true);
-			add(regularButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-					GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+			add(regularButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
+					new Insets(2, 2, 2, 2), 0, 0));
 
-			JRadioButton laconicButton = new JRadioButton(new AbstractAction("Show laconic justifications") {
-				public void actionPerformed(ActionEvent e) {
-					workbenchSettings.setJustificationType(JustificationType.LACONIC);
-					settingsChanged();
-				}
-			});
-			add(laconicButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-					GridBagConstraints.HORIZONTAL, new Insets(2, 10, 2, 2), 0, 0));
+			JRadioButton laconicButton = new JRadioButton(
+					new AbstractAction("Show laconic justifications") {
+						public void actionPerformed(ActionEvent e) {
+							workbenchSettings.setJustificationType(
+									JustificationType.LACONIC);
+							settingsChanged();
+						}
+					});
+			add(laconicButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
+					new Insets(2, 10, 2, 2), 0, 0));
 
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(regularButton);
