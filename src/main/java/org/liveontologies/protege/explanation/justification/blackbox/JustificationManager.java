@@ -54,7 +54,7 @@ public class JustificationManager implements Disposable, OWLReasonerProvider {
 
 	private final OWLOntologyChangeListener ontologyChangeListener;
 
-	public static final String KEY = "uk.ac.manchester.cs.owl.explanation";
+	public static final String KEY = "org.liveontologies.protege.explanation.justification.blackbox";
 
 	private static final Logger logger = LoggerFactory.getLogger(JustificationManager.class);
 
