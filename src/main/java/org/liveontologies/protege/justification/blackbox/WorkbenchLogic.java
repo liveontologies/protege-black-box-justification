@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -22,15 +22,11 @@ package org.liveontologies.protege.explanation.justification.blackbox;
  * #L%
  */
 
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,18 +45,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WorkbenchLogic {
-	private OWLEditorKit editorKit;
 
 	private final WorkbenchManager workbenchManager;
 
-	private static final Logger logger = LoggerFactory.getLogger(WorkbenchLogic.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(WorkbenchLogic.class);
 
-	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment, ExplanationProgressMonitor<OWLAxiom> monitor, WorkbenchSettings workbenchSettings) {
-		this.editorKit = ek;
-		JFrame workspaceFrame = ProtegeManager.getInstance().getFrame(ek.getWorkspace());
-		JustificationManager justificationManager = JustificationManager.getExplanationManager(workspaceFrame,
-				ek.getOWLModelManager());
-		this.workbenchManager = new WorkbenchManager(justificationManager, entailment, monitor, workbenchSettings);
+	public WorkbenchLogic(OWLEditorKit ek, OWLAxiom entailment,
+			ExplanationProgressMonitor<OWLAxiom> monitor,
+			WorkbenchSettings workbenchSettings) {
+		JFrame workspaceFrame = ProtegeManager.getInstance()
+				.getFrame(ek.getWorkspace());
+		JustificationManager justificationManager = JustificationManager
+				.getExplanationManager(workspaceFrame, ek.getOWLModelManager());
+		this.workbenchManager = new WorkbenchManager(justificationManager,
+				entailment, monitor, workbenchSettings);
 	}
 
 	public HashSet<ArrayList<OWLAxiom>> getAxioms() {
@@ -75,7 +74,8 @@ public class WorkbenchLogic {
 			}
 			return axioms;
 		} catch (ExplanationException e) {
-			logger.error("An error occurred whilst computing explanations: {}", e.getMessage(), e);
+			logger.error("An error occurred whilst computing explanations: {}",
+					e.getMessage(), e);
 			return null;
 		}
 	}
@@ -87,30 +87,37 @@ public class WorkbenchLogic {
 	public List<Explanation<OWLAxiom>> getExplanations() {
 		try {
 			List<Explanation<OWLAxiom>> explanations = getOrderedExplanations(
-					workbenchManager.getJustifications(workbenchManager.getEntailment()));
+					workbenchManager.getJustifications(
+							workbenchManager.getEntailment()));
 			return explanations;
 		} catch (ExplanationException e) {
-			logger.error("An error occurred whilst computing explanations: {}", e.getMessage(), e);
+			logger.error("An error occurred whilst computing explanations: {}",
+					e.getMessage(), e);
 			return null;
 		}
 	}
 
-	protected List<Explanation<OWLAxiom>> getOrderedExplanations(Set<Explanation<OWLAxiom>> explanations) {
+	protected List<Explanation<OWLAxiom>> getOrderedExplanations(
+			Set<Explanation<OWLAxiom>> explanations) {
 		List<Explanation<OWLAxiom>> orderedExplanations = new ArrayList<>();
 		orderedExplanations.addAll(explanations);
-		Collections.sort(orderedExplanations, new Comparator<Explanation<OWLAxiom>>() {
-			public int compare(Explanation<OWLAxiom> o1, Explanation<OWLAxiom> o2) {
-				int diff = getAxiomTypes(o1).size() - getAxiomTypes(o2).size();
-				if (diff != 0) {
-					return diff;
-				}
-				diff = getClassExpressionTypes(o1).size() - getClassExpressionTypes(o2).size();
-				if (diff != 0) {
-					return diff;
-				}
-				return o1.getSize() - o2.getSize();
-			}
-		});
+		Collections.sort(orderedExplanations,
+				new Comparator<Explanation<OWLAxiom>>() {
+					public int compare(Explanation<OWLAxiom> o1,
+							Explanation<OWLAxiom> o2) {
+						int diff = getAxiomTypes(o1).size()
+								- getAxiomTypes(o2).size();
+						if (diff != 0) {
+							return diff;
+						}
+						diff = getClassExpressionTypes(o1).size()
+								- getClassExpressionTypes(o2).size();
+						if (diff != 0) {
+							return diff;
+						}
+						return o1.getSize() - o2.getSize();
+					}
+				});
 		return orderedExplanations;
 	}
 
@@ -122,10 +129,12 @@ public class WorkbenchLogic {
 		return result;
 	}
 
-	private Set<ClassExpressionType> getClassExpressionTypes(Explanation<OWLAxiom> explanation) {
+	private Set<ClassExpressionType> getClassExpressionTypes(
+			Explanation<OWLAxiom> explanation) {
 		Set<ClassExpressionType> result = new HashSet<>();
 		for (OWLAxiom ax : explanation.getAxioms()) {
-			result.addAll(ax.getNestedClassExpressions().stream().map(OWLClassExpression::getClassExpressionType)
+			result.addAll(ax.getNestedClassExpressions().stream()
+					.map(OWLClassExpression::getClassExpressionType)
 					.collect(Collectors.toList()));
 		}
 		return result;

@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -50,7 +50,8 @@ public class JustificationCache {
 	}
 
 	public void put(Explanation<OWLAxiom> explanation) {
-		Set<Explanation<OWLAxiom>> expls = cache.get(explanation.getEntailment());
+		Set<Explanation<OWLAxiom>> expls = cache
+				.get(explanation.getEntailment());
 		if (expls == null) {
 			expls = new HashSet<>();
 			cache.put(explanation.getEntailment(), expls);

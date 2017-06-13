@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>org.liveontologies.protege</groupId>
-	<artifactId>protege-black-box-justification-explanation</artifactId>
+	<artifactId>protege-black-box-justification</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
@@ -63,12 +63,12 @@ method and providing the Protege Justification Explanation plug-in with them.
 
 	<properties>
 		<protege.version>5.0.0-beta-19</protege.version>
-		<pluginId>${project.groupId}.protege.explanation.justification.blackbox</pluginId>
+		<pluginId>${project.groupId}.protege.justification.blackbox</pluginId>
 		<plugin-zip.file>${project.artifactId}-${project.version}</plugin-zip.file>
 		<!-- the next release version used in changes.xml -->
 		<release.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</release.version>
 		<!-- the path to update.properties and version-info.txt for Protege auto-update -->
-		<update.url>https://raw.githubusercontent.com/liveontologies/protege-black-box-justification-explanation/release</update.url>
+		<update.url>https://raw.githubusercontent.com/liveontologies/protege-black-box-justification/release</update.url>
 	</properties>
 
 	<repositories>

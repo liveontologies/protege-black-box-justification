@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -22,9 +22,7 @@ package org.liveontologies.protege.explanation.justification.blackbox;
  * #L%
  */
 
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,11 +40,13 @@ public class JustificationComputator extends JustificationComputation {
 	private List<JustificationComputationListener> listeners;
 	private WorkbenchLogic logic;
 
-	public JustificationComputator(OWLAxiom entailment, OWLEditorKit kit, WorkbenchSettings workbenchSettings) {
+	public JustificationComputator(OWLAxiom entailment, OWLEditorKit kit,
+			WorkbenchSettings workbenchSettings) {
 		super(entailment);
-		//!!! should probably be moved from constructor to speed up the process
+		// !!! should probably be moved from constructor to speed up the process
 		listeners = new ArrayList<JustificationComputationListener>();
-		JustificationProgressMonitor monitor = new JustificationProgressMonitor(this);
+		JustificationProgressMonitor monitor = new JustificationProgressMonitor(
+				this);
 		logic = new WorkbenchLogic(kit, entailment, monitor, workbenchSettings);
 	}
 
@@ -56,7 +56,8 @@ public class JustificationComputator extends JustificationComputation {
 	}
 
 	private void foundExplanation(ArrayList<OWLAxiom> explanation) {
-		for (JustificationComputationListener listener : new ArrayList<>(listeners))
+		for (JustificationComputationListener listener : new ArrayList<>(
+				listeners))
 			listener.foundJustification(explanation);
 	}
 
@@ -71,25 +72,31 @@ public class JustificationComputator extends JustificationComputation {
 	}
 
 	@Override
-	public void addComputationListener(JustificationComputationListener listener) {
+	public void addComputationListener(
+			JustificationComputationListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeComputationListener(JustificationComputationListener listener) {
+	public void removeComputationListener(
+			JustificationComputationListener listener) {
 		listeners.remove(listener);
 	}
 
-	private class JustificationProgressMonitor implements ExplanationProgressMonitor<OWLAxiom> {
+	private class JustificationProgressMonitor
+			implements ExplanationProgressMonitor<OWLAxiom> {
 
 		private final JustificationComputator computation;
 
-		public JustificationProgressMonitor(JustificationComputator computation) {
+		public JustificationProgressMonitor(
+				JustificationComputator computation) {
 			this.computation = computation;
 		}
 
-		public void foundExplanation(ExplanationGenerator<OWLAxiom> owlAxiomExplanationGenerator,
-				Explanation<OWLAxiom> explanation, Set<Explanation<OWLAxiom>> explanations) {
+		public void foundExplanation(
+				ExplanationGenerator<OWLAxiom> owlAxiomExplanationGenerator,
+				Explanation<OWLAxiom> explanation,
+				Set<Explanation<OWLAxiom>> explanations) {
 			ArrayList<OWLAxiom> list = new ArrayList<OWLAxiom>();
 			for (OWLAxiom axiom : explanation.getAxioms())
 				list.add(axiom);

@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -60,17 +60,15 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
  */
 public class ProtegeOWLReasonerFactoryWrapper implements OWLReasonerFactory {
 
-	private ProtegeOWLReasonerInfo info;
-
 	private OWLReasonerFactory reasonerFactory;
 
 	public ProtegeOWLReasonerFactoryWrapper(ProtegeOWLReasonerInfo info) {
-		this.info = info;
 		this.reasonerFactory = info.getReasonerFactory();
 	}
 
 	public ProtegeOWLReasonerFactoryWrapper(OWLEditorKit editorKit) {
-		this(editorKit.getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory());
+		this(editorKit.getOWLModelManager().getOWLReasonerManager()
+				.getCurrentReasonerFactory());
 	}
 
 	public String getReasonerName() {
@@ -86,11 +84,13 @@ public class ProtegeOWLReasonerFactoryWrapper implements OWLReasonerFactory {
 	}
 
 	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology,
-			OWLReasonerConfiguration owlReasonerConfiguration) throws IllegalConfigurationException {
+			OWLReasonerConfiguration owlReasonerConfiguration)
+			throws IllegalConfigurationException {
 		return reasonerFactory.createReasoner(ontology);
 	}
 
-	public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration owlReasonerConfiguration)
+	public OWLReasoner createReasoner(OWLOntology ontology,
+			OWLReasonerConfiguration owlReasonerConfiguration)
 			throws IllegalConfigurationException {
 		return reasonerFactory.createReasoner(ontology);
 	}

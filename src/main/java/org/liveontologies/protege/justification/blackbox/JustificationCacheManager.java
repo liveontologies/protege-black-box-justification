@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -41,7 +41,8 @@ public class JustificationCacheManager {
 		}
 	}
 
-	public JustificationCache getJustificationCache(JustificationType justificationType) {
+	public JustificationCache getJustificationCache(
+			JustificationType justificationType) {
 		return caches.get(justificationType);
 	}
 

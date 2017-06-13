@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -70,8 +70,8 @@ import java.util.Set;
  * Information Management Group
  * Date: 03-Oct-2008
  */
-public class CachingRootDerivedGenerator
-		implements RootDerivedReasoner, Disposable, OWLModelManagerListener, OWLOntologyChangeListener {
+public class CachingRootDerivedGenerator implements RootDerivedReasoner,
+		Disposable, OWLModelManagerListener, OWLOntologyChangeListener {
 
 	private OWLModelManager modelManager;
 
@@ -87,13 +87,16 @@ public class CachingRootDerivedGenerator
 		dirty = true;
 	}
 
-	public Set<OWLClass> getRootUnsatisfiableClasses() throws ExplanationException {
+	public Set<OWLClass> getRootUnsatisfiableClasses()
+			throws ExplanationException {
 		if (dirty) {
 			rootUnsatClses.clear();
 			dirty = false;
 			OWLReasonerFactory rf = new ProtegeOWLReasonerFactoryWrapper(
-					modelManager.getOWLReasonerManager().getCurrentReasonerFactory());
-			RootDerivedReasoner gen = new StructuralRootDerivedReasoner(OWLManager.createOWLOntologyManager(),
+					modelManager.getOWLReasonerManager()
+							.getCurrentReasonerFactory());
+			RootDerivedReasoner gen = new StructuralRootDerivedReasoner(
+					OWLManager.createOWLOntologyManager(),
 					modelManager.getReasoner(), rf);
 			rootUnsatClses.addAll(gen.getRootUnsatisfiableClasses());
 		}
@@ -108,12 +111,14 @@ public class CachingRootDerivedGenerator
 		return Collections.emptySet();
 	}
 
-	public void ontologiesChanged(List<? extends OWLOntologyChange> list) throws OWLException {
+	public void ontologiesChanged(List<? extends OWLOntologyChange> list)
+			throws OWLException {
 		dirty = true;
 	}
 
 	public void handleChange(OWLModelManagerChangeEvent event) {
-		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED) || event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
+		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)
+				|| event.isType(EventType.ONTOLOGY_CLASSIFIED)) {
 			dirty = true;
 		}
 	}

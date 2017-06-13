@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -24,12 +24,9 @@ package org.liveontologies.protege.explanation.justification.blackbox;
 
 
 import org.semanticweb.owl.explanation.api.Explanation;
-import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationProgressMonitor;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,8 +42,9 @@ public class WorkbenchManager {
 	private OWLAxiom entailment;
 	private ExplanationProgressMonitor<OWLAxiom> monitor;
 
-	public WorkbenchManager(JustificationManager justificationManager, OWLAxiom entailment,
-			ExplanationProgressMonitor<OWLAxiom> monitor, WorkbenchSettings workbenchSettings) {
+	public WorkbenchManager(JustificationManager justificationManager,
+			OWLAxiom entailment, ExplanationProgressMonitor<OWLAxiom> monitor,
+			WorkbenchSettings workbenchSettings) {
 		this.justificationManager = justificationManager;
 		this.entailment = entailment;
 		this.monitor = monitor;
@@ -66,13 +64,17 @@ public class WorkbenchManager {
 	}
 
 	public Set<Explanation<OWLAxiom>> getJustifications(OWLAxiom entailment) {
-		JustificationType justificationType = workbenchSettings.getJustificationType();
-		return justificationManager.getJustifications(entailment, justificationType, getMonitor());
+		JustificationType justificationType = workbenchSettings
+				.getJustificationType();
+		return justificationManager.getJustifications(entailment,
+				justificationType, getMonitor());
 	}
 
 	public int getJustificationCount(OWLAxiom entailment) {
-		JustificationType justificationType = workbenchSettings.getJustificationType();
-		return justificationManager.getComputedExplanationCount(entailment, justificationType);
+		JustificationType justificationType = workbenchSettings
+				.getJustificationType();
+		return justificationManager.getComputedExplanationCount(entailment,
+				justificationType);
 	}
 
 	public JustificationManager getJustificationManager() {
@@ -81,8 +83,9 @@ public class WorkbenchManager {
 
 	public int getPopularity(OWLAxiom axiom) {
 		int count = 0;
-		Set<Explanation<OWLAxiom>> justifications = justificationManager.getJustifications(entailment,
-				workbenchSettings.getJustificationType(), getMonitor());
+		Set<Explanation<OWLAxiom>> justifications = justificationManager
+				.getJustifications(entailment,
+						workbenchSettings.getJustificationType(), getMonitor());
 		for (Explanation<OWLAxiom> justification : justifications) {
 			if (justification.contains(axiom)) {
 				count++;

@@ -1,4 +1,4 @@
-package org.liveontologies.protege.explanation.justification.blackbox;
+package org.liveontologies.protege.justification.blackbox;
 
 /*-
  * #%L
@@ -74,11 +74,14 @@ public class JustificationComputationServiceImpl extends ComputationService {
 	}
 
 	public class SettingsPanel extends JPanel {
+		private static final long serialVersionUID = -7739713369763932582L;
 
 		public SettingsPanel() {
 			setLayout(new GridBagLayout());
 			JRadioButton regularButton = new JRadioButton(
 					new AbstractAction("Show regular justifications") {
+						private static final long serialVersionUID = -6891893179359746635L;
+
 						public void actionPerformed(ActionEvent e) {
 							workbenchSettings.setJustificationType(
 									JustificationType.REGULAR);
@@ -92,6 +95,8 @@ public class JustificationComputationServiceImpl extends ComputationService {
 
 			JRadioButton laconicButton = new JRadioButton(
 					new AbstractAction("Show laconic justifications") {
+						private static final long serialVersionUID = 2722880350674413509L;
+
 						public void actionPerformed(ActionEvent e) {
 							workbenchSettings.setJustificationType(
 									JustificationType.LACONIC);
