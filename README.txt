@@ -24,7 +24,7 @@ method and providing the Protege Justification Explanation plug-in with them.
 
 For further information see: 
 
-https://github.com/liveontologies/protege-black-box-justification-explanation 
+https://github.com/liveontologies/protege-black-box-justification 
 
 REQUIREMENTS:
 
@@ -35,7 +35,7 @@ INSTALLATION:
 
 To install, place all jar files inside the archive 
 
-	protege-black-box-justification-explanation-0.0.1-SNAPSHOT.zip 
+	protege-black-box-justification-0.0.1-SNAPSHOT.zip 
 
 to the plugins folder of the Protege installation. The plug-in supports Protege
 Auto Update feature which can be used for upgrading to newer versions according
