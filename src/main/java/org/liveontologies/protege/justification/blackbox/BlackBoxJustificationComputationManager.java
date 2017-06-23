@@ -22,6 +22,7 @@ package org.liveontologies.protege.justification.blackbox;
  * #L%
  */
 
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -32,45 +33,50 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.liveontologies.protege.explanation.justification.service.ComputationService;
 import org.liveontologies.protege.explanation.justification.service.JustificationComputation;
+import org.liveontologies.protege.explanation.justification.service.JustificationComputation.InterruptMonitor;
+import org.liveontologies.protege.explanation.justification.service.JustificationComputationManager;
+import org.liveontologies.protege.explanation.justification.service.JustificationListener;
+import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
-public class JustificationComputationServiceImpl extends ComputationService {
+/**
+ * @author Alexander Stupnikov Date: 22/06/2017
+ */
+public class BlackBoxJustificationComputationManager
+		extends JustificationComputationManager {
 
-	private SettingsPanel panel;
-	private WorkbenchSettings workbenchSettings;
+	private final SettingsPanel panel_;
+	private final WorkbenchSettings workbenchSettings_;
+	private final OWLEditorKit kit_;
+	
+	private JustificationComputation computation_;
 
-	@Override
-	public void initialise() throws Exception {
-		panel = new SettingsPanel();
-		workbenchSettings = new WorkbenchSettings();
+	public BlackBoxJustificationComputationManager(OWLAxiom entailment,
+			JustificationListener listener, InterruptMonitor monitor,
+			OWLEditorKit kit) {
+		super(entailment, listener, monitor);
+		kit_ = kit;
+		panel_ = new SettingsPanel();
+		workbenchSettings_ = new WorkbenchSettings();
+		recreateComputation();
+	}
+
+	private void recreateComputation() {
+		computation_ = new BlackBoxJustificationComputation(getJustificationListener(),
+				getInterruptMonitor(), getEntailment(), kit_,
+				workbenchSettings_);
+		notifyComputationChanged();
 	}
 
 	@Override
-	public boolean canComputeJustification(OWLAxiom entailment) {
-		return true;
-	}
-
-	@Override
-	public void dispose() {
-	}
-
-	@Override
-	public JustificationComputation createJustificationComputation(
-			OWLAxiom entailment) {
-		return new JustificationComputator(entailment, getOWLEditorKit(),
-				workbenchSettings);
-	}
-
-	@Override
-	public String getName() {
-		return "Black-Box Justifications";
+	public JustificationComputation getComputation() {
+		return computation_;
 	}
 
 	@Override
 	public JPanel getSettingsPanel() {
-		return panel;
+		return panel_;
 	}
 
 	public class SettingsPanel extends JPanel {
@@ -83,9 +89,9 @@ public class JustificationComputationServiceImpl extends ComputationService {
 						private static final long serialVersionUID = -6891893179359746635L;
 
 						public void actionPerformed(ActionEvent e) {
-							workbenchSettings.setJustificationType(
+							workbenchSettings_.setJustificationType(
 									JustificationType.REGULAR);
-							settingsChanged();
+							recreateComputation();
 						}
 					});
 			regularButton.setSelected(true);
@@ -98,9 +104,9 @@ public class JustificationComputationServiceImpl extends ComputationService {
 						private static final long serialVersionUID = 2722880350674413509L;
 
 						public void actionPerformed(ActionEvent e) {
-							workbenchSettings.setJustificationType(
+							workbenchSettings_.setJustificationType(
 									JustificationType.LACONIC);
-							settingsChanged();
+							recreateComputation();
 						}
 					});
 			add(laconicButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
