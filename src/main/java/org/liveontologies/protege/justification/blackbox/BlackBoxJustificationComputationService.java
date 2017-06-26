@@ -22,7 +22,6 @@ package org.liveontologies.protege.justification.blackbox;
  * #L%
  */
 
-
 import org.liveontologies.protege.explanation.justification.service.JustificationComputation.InterruptMonitor;
 import org.liveontologies.protege.explanation.justification.service.JustificationComputationManager;
 import org.liveontologies.protege.explanation.justification.service.JustificationComputationService;

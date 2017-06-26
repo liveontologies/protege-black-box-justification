@@ -22,7 +22,6 @@ package org.liveontologies.protege.justification.blackbox;
  * #L%
  */
 
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -49,7 +48,7 @@ public class BlackBoxJustificationComputationManager
 	private final SettingsPanel panel_;
 	private final WorkbenchSettings workbenchSettings_;
 	private final OWLEditorKit kit_;
-	
+
 	private JustificationComputation computation_;
 
 	public BlackBoxJustificationComputationManager(OWLAxiom entailment,
@@ -63,9 +62,9 @@ public class BlackBoxJustificationComputationManager
 	}
 
 	private void recreateComputation() {
-		computation_ = new BlackBoxJustificationComputation(getJustificationListener(),
-				getInterruptMonitor(), getEntailment(), kit_,
-				workbenchSettings_);
+		computation_ = new BlackBoxJustificationComputation(
+				getJustificationListener(), getInterruptMonitor(),
+				getEntailment(), kit_, workbenchSettings_);
 		notifyComputationChanged();
 	}
 

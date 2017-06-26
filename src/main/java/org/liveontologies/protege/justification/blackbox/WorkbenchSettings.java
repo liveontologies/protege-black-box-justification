@@ -22,42 +22,37 @@ package org.liveontologies.protege.justification.blackbox;
  * #L%
  */
 
-
 /**
- * Author: Matthew Horridge
- * Stanford University
- * Bio-Medical Informatics Research Group
- * Date: 20/03/2012
+ * Author: Matthew Horridge Stanford University Bio-Medical Informatics Research
+ * Group Date: 20/03/2012
  */
 public class WorkbenchSettings {
 
-	private JustificationType justificationType = JustificationType.REGULAR;
-
-	private int limit = 2;
-
-	private boolean findAll = true;
+	private JustificationType justificationType_ = JustificationType.REGULAR;
+	private int limit_ = 2;
+	private boolean isFindAll_ = true;
 
 	public JustificationType getJustificationType() {
-		return justificationType;
+		return justificationType_;
 	}
 
 	public void setJustificationType(JustificationType justificationType) {
-		this.justificationType = justificationType;
+		this.justificationType_ = justificationType;
 	}
 
 	public int getLimit() {
-		return limit;
+		return limit_;
 	}
 
 	public void setLimit(int limit) {
-		this.limit = limit;
+		this.limit_ = limit;
 	}
 
 	public boolean isFindAllExplanations() {
-		return findAll;
+		return isFindAll_;
 	}
 
-	public void setFindAllExplanations(boolean findAllExplanations) {
-		findAll = findAllExplanations;
+	public void setFindAllJustifications(boolean isFindAllJustifications) {
+		isFindAll_ = isFindAllJustifications;
 	}
 }

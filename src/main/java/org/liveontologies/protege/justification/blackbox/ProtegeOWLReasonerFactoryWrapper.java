@@ -53,17 +53,15 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
  */
 
 /**
- * Author: Matthew Horridge
- * The University of Manchester
- * Information Management Group
- * Date: 06-Apr-2010
+ * Author: Matthew Horridge The University of Manchester Information Management
+ * Group Date: 06-Apr-2010
  */
 public class ProtegeOWLReasonerFactoryWrapper implements OWLReasonerFactory {
 
-	private OWLReasonerFactory reasonerFactory;
+	private OWLReasonerFactory reasonerFactory_;
 
 	public ProtegeOWLReasonerFactoryWrapper(ProtegeOWLReasonerInfo info) {
-		this.reasonerFactory = info.getReasonerFactory();
+		this.reasonerFactory_ = info.getReasonerFactory();
 	}
 
 	public ProtegeOWLReasonerFactoryWrapper(OWLEditorKit editorKit) {
@@ -72,26 +70,26 @@ public class ProtegeOWLReasonerFactoryWrapper implements OWLReasonerFactory {
 	}
 
 	public String getReasonerName() {
-		return reasonerFactory.getReasonerName();
+		return reasonerFactory_.getReasonerName();
 	}
 
 	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
-		return reasonerFactory.createReasoner(ontology);
+		return reasonerFactory_.createReasoner(ontology);
 	}
 
 	public OWLReasoner createReasoner(OWLOntology ontology) {
-		return reasonerFactory.createReasoner(ontology);
+		return reasonerFactory_.createReasoner(ontology);
 	}
 
 	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology,
 			OWLReasonerConfiguration owlReasonerConfiguration)
 			throws IllegalConfigurationException {
-		return reasonerFactory.createReasoner(ontology);
+		return reasonerFactory_.createReasoner(ontology);
 	}
 
 	public OWLReasoner createReasoner(OWLOntology ontology,
 			OWLReasonerConfiguration owlReasonerConfiguration)
 			throws IllegalConfigurationException {
-		return reasonerFactory.createReasoner(ontology);
+		return reasonerFactory_.createReasoner(ontology);
 	}
 }
