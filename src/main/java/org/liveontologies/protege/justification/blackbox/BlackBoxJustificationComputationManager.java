@@ -1,5 +1,8 @@
 package org.liveontologies.protege.justification.blackbox;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
 /*-
  * #%L
  * Protege Blackbox Justification Explanation
@@ -26,9 +29,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -82,39 +87,21 @@ public class BlackBoxJustificationComputationManager
 		private static final long serialVersionUID = -7739713369763932582L;
 
 		public SettingsPanel() {
-			setLayout(new GridBagLayout());
-			JRadioButton regularButton = new JRadioButton(
-					new AbstractAction("Show regular justifications") {
-						private static final long serialVersionUID = -6891893179359746635L;
-
-						public void actionPerformed(ActionEvent e) {
-							workbenchSettings_.setJustificationType(
-									JustificationType.REGULAR);
-							recreateComputation();
-						}
-					});
-			regularButton.setSelected(true);
-			add(regularButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-					new Insets(2, 2, 2, 2), 0, 0));
-
-			JRadioButton laconicButton = new JRadioButton(
-					new AbstractAction("Show laconic justifications") {
-						private static final long serialVersionUID = 2722880350674413509L;
-
-						public void actionPerformed(ActionEvent e) {
-							workbenchSettings_.setJustificationType(
-									JustificationType.LACONIC);
-							recreateComputation();
-						}
-					});
-			add(laconicButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-					new Insets(2, 10, 2, 2), 0, 0));
-
-			ButtonGroup bg = new ButtonGroup();
-			bg.add(regularButton);
-			bg.add(laconicButton);
+			JComboBox<String> cb = new JComboBox<String>();
+			cb.addItem("Regular justifications");
+			cb.addItem("Laconic justifications");
+			cb.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					workbenchSettings_
+							.setJustificationType((cb.getSelectedIndex() == 0
+									? JustificationType.REGULAR
+									: JustificationType.LACONIC));
+					recreateComputation();
+				}
+			});
+			setLayout(new BorderLayout());
+			add(cb);
 		}
 	}
 }
