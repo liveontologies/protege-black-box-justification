@@ -64,12 +64,6 @@ public class JustificationManager implements Disposable {
 		modelManager.addOntologyChangeListener(ontologyChangeListener_);
 	}
 
-	/**
-	 * 
-	 * 
-	 * @return set of justifications which are either obtained from cache if
-	 *         there are any or computed otherwise
-	 */
 	public void getJustifications(OWLAxiom entailment, JustificationType type,
 			ExplanationProgressMonitor<OWLAxiom> monitor)
 			throws ExplanationException {
