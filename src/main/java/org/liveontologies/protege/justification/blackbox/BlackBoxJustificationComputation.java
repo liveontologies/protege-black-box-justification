@@ -65,6 +65,10 @@ public class BlackBoxJustificationComputation extends JustificationComputation
 	@Override
 	public void startComputation() {
 		try {
+			justificationManager_
+					.getJustificationCache(
+							workbenchSettings_.getJustificationType())
+					.clear(entailment_);
 			justificationManager_.getJustifications(entailment_,
 					workbenchSettings_.getJustificationType(), this);
 		} catch (ExplanationGeneratorInterruptedException e) {
