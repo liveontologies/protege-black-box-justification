@@ -5,7 +5,7 @@
 		<import plugin="org.liveontologies.protege.explanation.justification.service"/>
 	</requires>
 
-	<extension id="JustificationService" point="org.liveontologies.protege.explanation.justification.JustificationService">
+	<extension id="JustificationService" point="org.liveontologies.protege.explanation.justification.JustificationComputationService">
 		<name value="Justification Service" />
 		<class value="org.liveontologies.protege.justification.blackbox.BlackBoxJustificationComputationService" />
 	</extension>
